@@ -25,7 +25,7 @@ let cardapio = {
 
     petiscos: [
         {nome:"Camarão Crocante", preco:23},
-        {nome:"Batata", preco:15},
+        {nome:"Batata", preco:14},
         {nome:"Batata 1/2", preco:9},
         {nome:"Batata Especial", preco:22},
         {nome:"Macaxeira", preco:15},
@@ -88,13 +88,11 @@ function salvar(){
 }
 
 function abrirMesa(){
-
     if(mesas.length >= 20){
         alert("Limite de 20 mesas!");
         return;
     }
 
-    // 🔁 reinicia depois do 20
     if(contadorMesa > 20){
         contadorMesa = 1;
     }
@@ -107,7 +105,6 @@ function abrirMesa(){
     });
 
     contadorMesa++;
-
     salvar();
     renderMesas();
 }
@@ -147,9 +144,15 @@ function abrirTela(i){
 
     html += "<ul>";
     mesa.itens.forEach((it,idx)=>{
-        html += `<li onclick="remover(${i},${idx})">
-        ${it.nome} - R$ ${it.preco.toFixed(2)}
-        </li>`;
+        html += `
+        <li>
+            ${it.nome} x${it.qtd} - R$ ${(it.preco * it.qtd).toFixed(2)}
+            <br>
+            <button onclick="add(${i}, '${it.nome}', ${it.preco})">➕</button>
+            <button onclick="diminuir(${i},${idx})">➖</button>
+            <button onclick="removerTudo(${i},${idx})">❌</button>
+        </li>
+        `;
     });
     html += "</ul>";
 
@@ -157,7 +160,7 @@ function abrirTela(i){
         html += `<h3>${cat}</h3>`;
         cardapio[cat].forEach(item=>{
             html += `
-            <button class="produto" onclick='add(${i}, ${JSON.stringify(item)})'>
+            <button class="produto" onclick="add(${i}, '${item.nome}', ${item.preco})">
                 ${item.nome}<br>R$ ${item.preco}
             </button>`;
         });
@@ -171,19 +174,51 @@ function abrirTela(i){
     tela.innerHTML = html;
 }
 
-function add(i,item){
-    mesas[i].itens.push(item);
-    mesas[i].total += item.preco;
+function add(i,nome,preco){
+    let mesa = mesas[i];
+
+    let existente = mesa.itens.find(it => it.nome === nome);
+
+    if(existente){
+        existente.qtd++;
+        mesa.total += preco;
+    } else {
+        mesa.itens.push({
+            nome: nome,
+            preco: preco,
+            qtd: 1
+        });
+        mesa.total += preco;
+    }
+
     salvar();
     abrirTela(i);
 }
 
-function remover(i,idx){
+function diminuir(i,idx){
     let item = mesas[i].itens[idx];
+
+    item.qtd--;
     mesas[i].total -= item.preco;
-    mesas[i].itens.splice(idx,1);
+
+    if(item.qtd <= 0){
+        mesas[i].itens.splice(idx,1);
+    }
+
     salvar();
     abrirTela(i);
+}
+
+function removerTudo(i,idx){
+    if(confirm("Remover todos desse item?")){
+        let item = mesas[i].itens[idx];
+
+        mesas[i].total -= item.preco * item.qtd;
+        mesas[i].itens.splice(idx,1);
+
+        salvar();
+        abrirTela(i);
+    }
 }
 
 function editarMesa(i){
