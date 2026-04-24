@@ -2,7 +2,7 @@ let cardapio = {
 
     comidas: [
         {nome:"Baião", preco:15},
-        {nome:"Baião 1/2", preco:9},
+        {nome:"Baião 1/2", preco:10},
         {nome:"Arroz", preco:13},
         {nome:"Arroz 1/2", preco:7},
         {nome:"Arroz Agrega", preco:16},
@@ -25,8 +25,8 @@ let cardapio = {
 
     petiscos: [
         {nome:"Camarão Crocante", preco:23},
-        {nome:"Batata", preco:14},
-        {nome:"Batata 1/2", preco:9},
+        {nome:"Batata", preco:15},
+        {nome:"Batata 1/2", preco:10},
         {nome:"Batata Especial", preco:22},
         {nome:"Macaxeira", preco:15},
         {nome:"Macaxeira 1/2", preco:10},
