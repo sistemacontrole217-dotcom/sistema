@@ -6,25 +6,23 @@ body {
 }
 
 button {
-    font-size: 20px;
     padding: 15px;
     margin: 6px;
     border-radius: 10px;
     border: none;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 .mesaBtn {
-    font-size: 20px;
     width: 45%;
-    background: #535353;
+    background: #666;
     color: #fff;
 }
 
 .produto {
     width: 45%;
-    background: #c7c7c7;
+    background: #aaa;
     color: #000;
 }
 
@@ -35,7 +33,6 @@ button {
 }
 
 li {
-    font-size: 25px;
     background: #222;
     margin: 5px;
     padding: 12px;

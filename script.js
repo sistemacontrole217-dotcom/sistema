@@ -25,7 +25,7 @@ let cardapio = {
 
     petiscos: [
         {nome:"Camarão Crocante", preco:23},
-        {nome:"Batata", preco:15},
+        {nome:"Batata", preco:14},
         {nome:"Batata 1/2", preco:9},
         {nome:"Batata Especial", preco:22},
         {nome:"Macaxeira", preco:15},
