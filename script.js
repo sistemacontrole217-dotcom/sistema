@@ -1,4 +1,5 @@
 let cardapio = {
+
     comidas: [
         {nome:"Baião", preco:15},
         {nome:"Baião 1/2", preco:9},
@@ -24,7 +25,7 @@ let cardapio = {
 
     petiscos: [
         {nome:"Camarão Crocante", preco:23},
-        {nome:"Batata", preco:14},
+        {nome:"Batata", preco:15},
         {nome:"Batata 1/2", preco:9},
         {nome:"Batata Especial", preco:22},
         {nome:"Macaxeira", preco:15},
@@ -76,16 +77,28 @@ let cardapio = {
 let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
 let contadorMesa = JSON.parse(localStorage.getItem("contadorMesa")) || 1;
 
-function vibrar(){
-    if(navigator.vibrate) navigator.vibrate(50);
-}
+let totalDia = JSON.parse(localStorage.getItem("totalDia")) || 0;
+let mesasAtendidas = JSON.parse(localStorage.getItem("mesasAtendidas")) || 0;
 
 function salvar(){
     localStorage.setItem("mesas", JSON.stringify(mesas));
     localStorage.setItem("contadorMesa", contadorMesa);
+    localStorage.setItem("totalDia", totalDia);
+    localStorage.setItem("mesasAtendidas", mesasAtendidas);
 }
 
 function abrirMesa(){
+
+    if(mesas.length >= 20){
+        alert("Limite de 20 mesas!");
+        return;
+    }
+
+    // 🔁 reinicia depois do 20
+    if(contadorMesa > 20){
+        contadorMesa = 1;
+    }
+
     mesas.push({
         id: contadorMesa,
         nome: null,
@@ -94,13 +107,21 @@ function abrirMesa(){
     });
 
     contadorMesa++;
+
     salvar();
     renderMesas();
 }
 
 function renderMesas(){
     let div = document.getElementById("mesas");
-    div.innerHTML = "";
+
+    div.innerHTML = `
+    <h2>💰 R$ ${totalDia.toFixed(2)}</h2>
+    <h3>📊 Mesas: ${mesasAtendidas}</h3>
+
+    <button onclick="zerarCaixa()">🔄 Zerar</button>
+    <button onclick="gerarQR()">📱 PIX</button>
+    `;
 
     mesas.forEach((m,i)=>{
         div.innerHTML += `
@@ -120,31 +141,30 @@ function abrirTela(i){
     <h2>${mesa.nome || "Mesa " + mesa.id}</h2>
     <h3>Total: R$ ${mesa.total.toFixed(2)}</h3>
 
-    <button onclick="editarMesa(${i})">✏️ Editar Mesa</button>
+    <button onclick="editarMesa(${i})">✏️ Editar</button>
+    <button onclick="gerarQR()">💰 PIX</button>
     `;
 
-    html += "<h3>Itens:</h3><ul>";
+    html += "<ul>";
     mesa.itens.forEach((it,idx)=>{
-        html += `
-        <li onclick="remover(${i},${idx})">
-            ${it.nome} - R$ ${it.preco.toFixed(2)} ❌
+        html += `<li onclick="remover(${i},${idx})">
+        ${it.nome} - R$ ${it.preco.toFixed(2)}
         </li>`;
     });
     html += "</ul>";
 
     for(let cat in cardapio){
         html += `<h3>${cat}</h3>`;
-
         cardapio[cat].forEach(item=>{
             html += `
             <button class="produto" onclick='add(${i}, ${JSON.stringify(item)})'>
-                ${item.nome} <br> R$ ${item.preco.toFixed(2)}
+                ${item.nome}<br>R$ ${item.preco}
             </button>`;
         });
     }
 
     html += `
-    <br><button class="finalizar" onclick="fecharConta(${i})">FECHAR CONTA</button>
+    <br><button class="finalizar" onclick="fecharConta(${i})">FECHAR</button>
     <br><button onclick="voltar()">⬅ Voltar</button>
     `;
 
@@ -152,7 +172,6 @@ function abrirTela(i){
 }
 
 function add(i,item){
-    vibrar();
     mesas[i].itens.push(item);
     mesas[i].total += item.preco;
     salvar();
@@ -160,7 +179,6 @@ function add(i,item){
 }
 
 function remover(i,idx){
-    vibrar();
     let item = mesas[i].itens[idx];
     mesas[i].total -= item.preco;
     mesas[i].itens.splice(idx,1);
@@ -169,30 +187,60 @@ function remover(i,idx){
 }
 
 function editarMesa(i){
-    let novoNome = prompt("Nome ou número da mesa:");
-
-    if(novoNome){
-        mesas[i].nome = novoNome;
+    let nome = prompt("Nome da mesa:");
+    if(nome){
+        mesas[i].nome = nome;
         salvar();
-        abrirTela(i);
         renderMesas();
+        abrirTela(i);
     }
 }
 
 function fecharConta(i){
-    let mesa = mesas[i]; // ✅ corrigido
+    let mesa = mesas[i];
 
-    let pago = prompt("Total: R$ "+mesa.total+"\nValor recebido:");
+    let pago = prompt("Total: R$ "+mesa.total+"\nValor:");
     if(!pago) return;
 
     let troco = pago - mesa.total;
-
     alert("Troco: R$ " + troco.toFixed(2));
+
+    totalDia += mesa.total;
+    mesasAtendidas++;
 
     mesas.splice(i,1);
     salvar();
     voltar();
     renderMesas();
+}
+
+function zerarCaixa(){
+    if(confirm("Zerar dia?")){
+        totalDia = 0;
+        mesasAtendidas = 0;
+        salvar();
+        renderMesas();
+    }
+}
+
+function gerarQR(){
+    let qr = document.getElementById("qrArea");
+    qr.classList.remove("oculto");
+
+    qr.innerHTML = `
+    <h2>💰 PIX</h2>
+
+    <img src="pix.jpeg">
+
+    <p><b>Terezinha Cruz</b></p>
+    <p>Chave: 85997614327</p>
+
+    <button onclick="fecharQR()">Fechar</button>
+    `;
+}
+
+function fecharQR(){
+    document.getElementById("qrArea").classList.add("oculto");
 }
 
 function voltar(){

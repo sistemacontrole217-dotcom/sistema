@@ -5,10 +5,6 @@ body {
     text-align: center;
 }
 
-h1 {
-    color: #fff;
-}
-
 button {
     padding: 15px;
     margin: 6px;
@@ -20,13 +16,11 @@ button {
 
 .mesaBtn {
     width: 45%;
-    background: #838383;
-    color: #000000;
-    font-size: 20px;
+    background: #666;
+    color: #fff;
 }
 
 .produto {
-    font-size: 20px;
     width: 45%;
     background: #aaa;
     color: #000;
@@ -36,11 +30,9 @@ button {
     background: red;
     color: white;
     width: 90%;
-    font-size: 18px;
 }
 
 li {
-    font-size: 20px;
     background: #222;
     margin: 5px;
     padding: 12px;
@@ -49,4 +41,9 @@ li {
 
 .oculto {
     display: none;
+}
+
+#qrArea img {
+    width: 200px;
+    margin: 10px;
 }
